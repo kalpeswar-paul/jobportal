@@ -17,15 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from jobs.views import job_list_view, job_create_view, landing_page
+from jobs.views import job_list_view, job_create_view, signup_view, landing_page, logout_view
 
 
 urlpatterns = [
-     path('', landing_page, name='landing_page'),
+
+    path('', landing_page, name='landing_page'),
     path('admin/', admin.site.urls),
 
     path('login/', auth_views.LoginView.as_view(template_name="login.html"), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), name='logout'),
+    # OLD:
+    # path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    # NEW:
+    path('logout/', logout_view, name='logout'),
+
+    path('signup/', signup_view, name='signup'),
 
     path('jobs/list/', job_list_view, name='job_list'),
     path('jobs/create/', job_create_view, name='job_create'),

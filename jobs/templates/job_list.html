@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Job Listings</h2>
-<div id="jobContainer" class="row mt-4"></div>
+
+<div class="hero text-center">
+    <h1>Explore Job Opportunities</h1>
+    <p class="lead">Find your next career move from our latest postings.</p>
+</div>
+
+<div id="jobContainer" class="row g-4"></div>
 
 <script>
 async function loadJobs() {
@@ -14,12 +19,18 @@ async function loadJobs() {
 
     jobs.forEach(job => {
         container.innerHTML += `
-            <div class="col-md-4">
-                <div class="card mb-3 p-3">
-                    <h4>${job.title}</h4>
-                    <p>${job.description}</p>
-                    <p><strong>Experience:</strong> ${job.experience}</p>
-                    <p><strong>Location:</strong> ${job.location}</p>
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">${job.title}</h4>
+                        <p class="text-muted">${job.description}</p>
+
+                        <p class="mb-1"><span class="fw-semibold">Experience:</span> ${job.experience}</p>
+                        <p><span class="fw-semibold">Location:</span> ${job.location}</p>
+                    </div>
+                    <div class="card-footer text-end bg-white border-0">
+                        <small class="text-muted">Posted on ${new Date(job.created_at).toLocaleDateString()}</small>
+                    </div>
                 </div>
             </div>
         `;
@@ -27,4 +38,5 @@ async function loadJobs() {
 }
 loadJobs();
 </script>
+
 {% endblock %}
