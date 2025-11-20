@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Create Job</h2>
+<form id="jobForm" class="mt-3">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label>Title</label>
+        <input id="title" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea id="description" class="form-control" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label>Experience</label>
+        <input id="experience" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Location</label>
+        <input id="location" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+
+<script>
+document.getElementById("jobForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    let data = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        experience: document.getElementById("experience").value,
+        location: document.getElementById("location").value
+    };
+
+    const response = await fetch("/api/jobs/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}"},
+        body: JSON.stringify(data)
+    });
+
+    if (response.status === 201) {
+        alert("Job created!");
+        window.location.href = "/jobs/list/";
+    } else {
+        alert("Error creating job.");
+    }
+});
+</script>
+{% endblock %}
