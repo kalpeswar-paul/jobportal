@@ -17,17 +17,25 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: '3.12'
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install django djangorestframework; fi
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install django djangorestframework drf-spectacular; fi
+
+    - name: Generate OpenAPI schema (validate drf-spectacular)
+      run: |
+        python manage.py spectacular --file schema.yml
 
     - name: Run migrations
+      env:
+        DJANGO_SETTINGS_MODULE: jobportal.settings
       run: |
-        python manage.py migrate
+        python manage.py migrate --noinput
 
     - name: Run tests
+      env:
+        DJANGO_SETTINGS_MODULE: jobportal.settings
       run: |
-        python manage.py test
+        python manage.py test --noinput
