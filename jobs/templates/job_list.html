@@ -1,42 +1,138 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<div class="hero text-center">
-    <h1>Explore Job Opportunities</h1>
-    <p class="lead">Find your next career move from our latest postings.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Job Listings</h2>
+        <small class="text-muted">Browse and apply for roles</small>
+    </div>
+
+    <div class="d-flex">
+        <input id="searchInput" class="form-control me-2" placeholder="Search jobs, company, role, location" style="min-width:300px;">
+        <button id="searchBtn" class="btn btn-outline-primary me-2">Search</button>
+
+        {% if user.is_authenticated %}
+            <button id="toggleMine" class="btn btn-primary">Show my jobs</button>
+        {% endif %}
+    </div>
 </div>
 
-<div id="jobContainer" class="row g-4"></div>
+<div id="jobsRow" class="row g-4"></div>
+
+<!-- Thank you modal (used after apply submit) -->
+<div class="modal fade" id="thankYouModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-body text-center p-5">
+        <h3 class="mb-3">Application Sent</h3>
+        <p class="text-muted">Thank you! Your application has been submitted. We'll notify the employer.</p>
+        <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-async function loadJobs() {
-    let res = await fetch("/api/jobs/");
-    let jobs = await res.json();
+const userIsAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
 
-    let container = document.getElementById("jobContainer");
-    container.innerHTML = "";
+async function fetchJobs({mine=false, q=null} = {}) {
+    let url = '/api/jobs/';
+    const params = new URLSearchParams();
+    if (mine && userIsAuth) params.set('mine', '1');
+    if (q) params.set('q', q);
+    if (params.toString()) url += '?' + params.toString();
 
+    const res = await fetch(url);
+    if (!res.ok) {
+        document.getElementById('jobsRow').innerHTML = '<div class="col-12">Error loading jobs</div>';
+        return;
+    }
+    const jobs = await res.json();
+    renderJobs(jobs);
+}
+
+function renderJobs(jobs) {
+    const container = document.getElementById('jobsRow');
+    container.innerHTML = '';
+    if (!jobs.length) {
+        container.innerHTML = '<div class="col-12"><div class="alert alert-info">No jobs found.</div></div>';
+        return;
+    }
     jobs.forEach(job => {
-        container.innerHTML += `
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow-sm h-100 border-0">
-                    <div class="card-body">
-                        <h4 class="card-title mb-3">${job.title}</h4>
-                        <p class="text-muted">${job.description}</p>
-
-                        <p class="mb-1"><span class="fw-semibold">Experience:</span> ${job.experience}</p>
-                        <p><span class="fw-semibold">Location:</span> ${job.location}</p>
+        const card = document.createElement('div');
+        card.className = 'col-md-6 col-lg-4';
+        card.innerHTML = `
+            <div class="card job-card h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title mb-1">${escapeHtml(job.title)}</h5>
+                            <div class="text-muted small">${escapeHtml(job.company_name || '')} • ${escapeHtml(job.job_role || '')}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-light text-dark">${escapeHtml(job.experience)}</div>
+                            <div class="text-muted small mt-1">${new Date(job.created_at).toLocaleDateString()}</div>
+                        </div>
                     </div>
-                    <div class="card-footer text-end bg-white border-0">
-                        <small class="text-muted">Posted on ${new Date(job.created_at).toLocaleDateString()}</small>
+
+                    <p class="mt-3 text-muted">${escapeHtml(job.description).slice(0,200)}${job.description.length>200 ? '...' : ''}</p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted">📍 ${escapeHtml(job.location)} • 💰 ${escapeHtml(job.ctc || 'Not disclosed')}</div>
+                        <div>
+                            <a href="/jobs/apply/${job.id}/" class="btn btn-sm btn-outline-primary me-2">Apply</a>
+                            {% if request.user.is_authenticated %}
+                                <!-- show edit link if owner (client-side check handled by server: job.owner_id available) -->
+                                <a href="/jobs/create/" class="btn btn-sm btn-primary">View</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         `;
+        container.appendChild(card);
     });
 }
-loadJobs();
+
+function escapeHtml(unsafe) {
+    if (!unsafe && unsafe !== 0) return '';
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+// Initial load: if authenticated, show only their jobs as requested
+document.addEventListener('DOMContentLoaded', () => {
+    if (userIsAuth) {
+        fetchJobs({mine:true});
+        document.getElementById('toggleMine').addEventListener('click', function() {
+            // toggle between my jobs and all
+            if (this.dataset.state === 'all' || !this.dataset.state) {
+                fetchJobs({mine:true});
+                this.textContent = 'Show all jobs';
+                this.dataset.state = 'mine';
+            } else {
+                fetchJobs({mine:false});
+                this.textContent = 'Show my jobs';
+                this.dataset.state = 'all';
+            }
+        });
+    } else {
+        fetchJobs();
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const q = document.getElementById('searchInput').value.trim();
+        if (userIsAuth && (document.getElementById('toggleMine') && document.getElementById('toggleMine').dataset.state === 'mine')) {
+            fetchJobs({mine:true, q});
+        } else {
+            fetchJobs({q});
+        }
+    });
+});
 </script>
 
 {% endblock %}

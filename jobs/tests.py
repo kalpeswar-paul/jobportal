@@ -1,6 +1,4 @@
 from django.test import TestCase
-
-# Create your tests here.
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from .models import JobPost
@@ -9,9 +7,10 @@ class JobAPITests(TestCase):
 
     def test_get_job_list(self):
         JobPost.objects.create(
+            owner=User.objects.create_user(username="u1"),
             title="Developer",
             description="Dev job",
-            experience="2 years",
+            experience="0-3 years",
             location="NY"
         )
         client = APIClient()
@@ -27,9 +26,14 @@ class JobAPITests(TestCase):
         data = {
             "title": "Engineer",
             "description": "Testing",
-            "experience": "3 years",
-            "location": "LA"
+            "experience": "3-5 years",
+            "location": "LA",
+            "company_name": "ACME",
+            "job_role": "Backend Developer",
+            "ctc": "10 LPA"
         }
 
         response = client.post("/api/jobs/", data, format='json')
         self.assertEqual(response.status_code, 201)
+        # Ensure owner assigned
+        self.assertEqual(response.json()['owner_username'], 'test')

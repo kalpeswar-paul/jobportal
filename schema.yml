@@ -1,0 +1,618 @@
+openapi: 3.0.3
+info:
+  title: JobPortal API
+  version: 1.0.0
+  description: OpenAPI schema / Swagger UI for JobPortal (jobs app + application endpoints).
+  contact:
+    name: JobPortal Team
+    email: support@example.com
+  license:
+    name: MIT
+paths:
+  /api/applications/:
+    get:
+      operationId: applications_list
+      tags:
+      - applications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+          description: ''
+    post:
+      operationId: applications_create
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Application'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Application'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+  /api/applications/{id}/:
+    get:
+      operationId: applications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this application.
+        required: true
+      tags:
+      - applications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+    put:
+      operationId: applications_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this application.
+        required: true
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Application'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Application'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+    patch:
+      operationId: applications_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this application.
+        required: true
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedApplication'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: ''
+    delete:
+      operationId: applications_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this application.
+        required: true
+      tags:
+      - applications
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/jobs/:
+    get:
+      operationId: jobs_list
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      tags:
+      - Jobs
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobPost'
+          description: ''
+    post:
+      operationId: jobs_create
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      tags:
+      - Jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+  /api/jobs/{id}/:
+    get:
+      operationId: jobs_retrieve
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job post.
+        required: true
+      tags:
+      - Jobs
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+    put:
+      operationId: jobs_update
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job post.
+        required: true
+      tags:
+      - Jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+    patch:
+      operationId: jobs_partial_update
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job post.
+        required: true
+      tags:
+      - Jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+    delete:
+      operationId: jobs_destroy
+      description: ViewSet for listing and creating Job posts. Public GET; authenticated
+        POST.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job post.
+        required: true
+      tags:
+      - Jobs
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job:
+          type: integer
+        job_title:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        mobile:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        resume:
+          type: string
+          format: uri
+        cover_letter:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - job
+      - job_title
+      - mobile
+      - name
+      - resume
+    JobPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+        owner_username:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        company_name:
+          type: string
+          maxLength: 255
+        job_role:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        experience:
+          type: string
+          description: e.g. 0-3 years
+          maxLength: 50
+        ctc:
+          type: string
+          description: e.g. 5 LPA
+          maxLength: 100
+        location:
+          type: string
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - experience
+      - id
+      - location
+      - owner_id
+      - owner_username
+      - title
+    PatchedApplication:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job:
+          type: integer
+        job_title:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        mobile:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        resume:
+          type: string
+          format: uri
+        cover_letter:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedJobPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+        owner_username:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        company_name:
+          type: string
+          maxLength: 255
+        job_role:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        experience:
+          type: string
+          description: e.g. 0-3 years
+          maxLength: 50
+        ctc:
+          type: string
+          description: e.g. 5 LPA
+          maxLength: 100
+        location:
+          type: string
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

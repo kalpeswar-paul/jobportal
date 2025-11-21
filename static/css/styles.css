@@ -1,11 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+:root {
+    --brand: #0d6efd;
+    --muted: #6c757d;
+}
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background-color: #f8fafc;
+    color: #222;
+}
+
+/* Hero image fallback configuration (image file is static/images/hero-corporate.jpg) */
+.hero {
+    border-radius: 10px;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    border: 0;
 }
 
 .card {
-    border-radius: 12px !important;
+    border-radius: 12px;
 }
 
-.hero {
-    color: white;
+/* small responsive tweaks */
+@media (max-width: 576px) {
+    .hero { min-height: 360px; padding: 40px 0; }
+    .cta-btn { width: 100%; }
 }

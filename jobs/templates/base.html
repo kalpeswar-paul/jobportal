@@ -1,84 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Job Portal</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Job Portal — Professional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="/static/css/styles.css">
     <style>
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.4rem;
-            letter-spacing: 0.5px;
-        }
-
+        /* Hero background overlay + gradient */
         .hero {
-            padding: 60px 0;
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            min-height: 420px;
+            position: relative;
             color: white;
+            display: flex;
+            align-items: center;
+        }
+        .hero::before{
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(6, 30, 60, 0.55), rgba(6, 30, 60, 0.55));
+            z-index: 1;
+        }
+        .hero .container { position: relative; z-index: 2; }
+        .cta-btn {
+            border-radius: 50px;
+            padding: 14px 30px;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(13,110,253,0.18);
+            transition: transform .14s ease, box-shadow .14s ease;
+        }
+        .cta-btn:hover{ transform: translateY(-3px); box-shadow: 0 14px 40px rgba(13,110,253,0.22); }
+        .nav-btn {
+            border-radius: 30px;
+            padding: 6px 14px;
+            margin-left: 8px;
+        }
+        .job-card {
             border-radius: 12px;
-            margin-bottom: 40px;
+            transition: transform .12s ease, box-shadow .12s ease;
         }
-
-        footer {
-            margin-top: 60px;
-            padding: 20px 0;
-            text-align: center;
-            color: #777;
-        }
+        .job-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.08); }
     </style>
 </head>
-
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="/jobs/list/">JobPortal</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+        <a class="navbar-brand fw-bold text-primary" href="{% url 'job_list' %}">JobPortal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div id="navbarNav" class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto ms-3">
-                <li class="nav-item">
-                    <a class="nav-link" href="/jobs/list/">Job List</a>
-                </li>
+        <div id="navCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-3 me-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'job_list' %}">Jobs</a></li>
                 {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/jobs/create/">Create Job</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'job_create' %}">Post a Job</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'applicants' %}">Applicants</a></li>
                 {% endif %}
             </ul>
 
-            <ul class="navbar-nav ms-auto">
+            <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout ({{ user.username }})</a>
-
-                </li>
+                    <span class="me-2 text-muted small">Signed in as <strong>{{ user.username }}</strong></span>
+                    <a class="btn btn-outline-primary nav-btn" href="{% url 'logout' %}">Logout</a>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/login/">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signup/">Sign Up</a>
-                </li>
+                    <a class="btn btn-outline-primary nav-btn" href="{% url 'login' %}">Log in</a>
+                    <a class="btn btn-primary nav-btn" href="{% url 'signup' %}">Sign up</a>
                 {% endif %}
-            </ul>
+            </div>
         </div>
     </div>
 </nav>
 
-<div class="container mt-4">
+<!-- Hero -->
+<section class="hero" style="background-image: url('/static/images/hero-corporate.jpg'); background-size: cover; background-position: center;">
+    <div class="container text-center py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold">Find the right talent or the perfect job</h1>
+                <p class="lead mt-3">Professional opportunities — curated listings from companies big and small. Post, search, and hire with confidence.</p>
+
+                <div class="mt-4">
+                    <a id="ctaViewJobs" class="btn btn-primary cta-btn" href="{% url 'job_list' %}">View Jobs</a>
+                    {% if not user.is_authenticated %}
+                        <a class="btn btn-outline-light ms-3 nav-btn" href="{% url 'signup' %}">Hire / Sign up</a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 text-muted small">
+                    Trusted by startups & SMEs — secure hiring.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container my-5">
     {% block content %}{% endblock %}
 </div>
 
-<footer>
-    <p> Developed by Kalpeswar Paul</p>
-    <p>© {% now "Y" %} JobPortal — Built with Django & Bootstrap</p>
-    
+<footer class="py-4 bg-white">
+    <div class="container text-center">
+        <small class="text-muted">© {% now "Y" %} JobPortal — Built with Django & Bootstrap</small>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
