@@ -8,6 +8,8 @@ from jobs.views import (
     apply_view, submit_application_view, applicants_view
 )
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -23,6 +25,14 @@ urlpatterns = [
     path('jobs/applicants/', applicants_view, name='applicants'),
 
     path('api/', include('jobs.api_urls')),
+
+    # OpenAPI schema and documentation (drf-spectacular)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Swagger UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # Redoc:
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
 ]
 
 if settings.DEBUG:

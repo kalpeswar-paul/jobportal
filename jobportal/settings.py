@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'jobs',
 ]
 
@@ -24,9 +25,23 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ]
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "JobPortal API",
+    "DESCRIPTION": "OpenAPI schema / Swagger UI for JobPortal (jobs app + application endpoints).",
+    "VERSION": "1.0.0",
+    # Optional: provide contact/license info
+    "CONTACT": {"name": "JobPortal Team", "email": "support@example.com"},
+    "LICENSE": {"name": "MIT"},
+    # Switch to True in dev to include serializer examples automatically generated
+    "SCHEMA_PATH_PREFIX": r"/api",
+  
 }
 
 MIDDLEWARE = [
@@ -76,6 +91,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Media (for uploaded resumes)
 MEDIA_URL = '/media/'

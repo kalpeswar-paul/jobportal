@@ -1,6 +1,16 @@
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import viewsets, permissions
 from .models import JobPost, Application
 from .serializers import JobPostSerializer, ApplicationSerializer
+
+@extend_schema(
+    description="ViewSet for listing and creating Job posts. Public GET; authenticated POST.",
+    tags=['Jobs']
+)
+
+class JobPostViewSet(viewsets.ModelViewSet):
+    queryset = JobPost.objects.all().order_by('-created_at')
+    serializer_class = JobPostSerializer
 
 class JobPostViewSet(viewsets.ModelViewSet):
     queryset = JobPost.objects.all().order_by('-created_at')
